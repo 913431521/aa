@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.itcast.mapper.UserMapper">
+    <select id="findAll" resultType="user" parameterType="PageBean">
+        select * from user
+        <where>
+            <if test="user!=null">
+            <if test="user.username!=null and user.username.length>0">
+                or  username like '%${user.username}%'
+            </if>
+            <if test="user.address!=null and user.address.length>0">
+                or  address like '%${user.address}%'
+            </if>
+            <if test="user.email!=null and user.email.length>0">
+                or  email like '%${user.email}%'
+            </if>
+            </if>
+
+        </where>
+            <if test="start!=null">
+          limit #{start},#{pageCount}
+            </if>
+    </select>
+
+    <select id="findLogin" resultType="user" parameterType="user">
+        select * from user where username=#{username} and pwd=#{pwd}
+    </select>
+
+    <select id="findCount" resultType="int" parameterType="PageBean">
+        select count(1) from user
+        <where>
+            <if test="user!=null">
+            <if test="user.username!=null and user.username.length>0">
+                or  username like '%${user.username}%'
+            </if>
+            <if test="user.address!=null and user.address.length>0">
+                or  address like '%${user.address}%'
+            </if>
+            <if test="user.email!=null and user.email.length>0">
+                or  email like '%${user.email}%'
+            </if>
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="saveUser" parameterType="user">
+        insert into user (username,pwd,age,sex,address,qq,email) values(#{username},#{pwd},#{age},#{sex},#{address},#{qq},#{email})
+    </insert>
+
+    <select id="findById" parameterType="int" resultType="user">
+        select * from user where id=#{id}
+    </select>
+
+    <update id="updateUser" parameterType="user">
+        update user set username=#{username},sex=#{sex},age=#{age},address=#{address},email=#{email},qq=#{qq}where id=#{id}
+    </update>
+
+    <delete id="deleteUser" parameterType="int">
+        delete from user where id=#{id}
+    </delete>
+
+    <delete id="deleteAll" parameterType="int">
+         delete from user where id in
+         <foreach collection="array" item="id" open="(" separator="," close=")">
+               #{id}
+         </foreach>
+    </delete>
+</mapper>
+
